@@ -1,10 +1,7 @@
-# Add RVM's lib directory to the load path.
-#$:.unshift(File.expand_path('./lib', ENV['rvm_path']))
-
-
 set :stages, ["staging", "production"]
 set :default_stage, "staging"
 require 'capistrano/ext/multistage'
+require 'sidekiq/capistrano'
 
 set :application, "customer_backend"
 set :user, "customer_backend"
@@ -16,15 +13,13 @@ set :repository,  "git@github.com:egbertp/project_name.git"
 # Load RVM's capistrano plugin.
 require "rvm/capistrano"                  
 
-# Set RVM environment
-set :rvm_ruby_string, '1.9.3@customer_backend'
-set :rvm_type, :user  # Copy the exact line. I really mean :user here
-
-
+require "bundler/capistrano"
 
 load "config/deploy/recipes/base"
 load "config/deploy/recipes/nginx"
 load "config/deploy/recipes/unicorn"
+# Choose either MySQL or PostgreSQL
+load "config/deploy/recipes/mysql"
 load "config/deploy/recipes/postgresql"
 
 default_run_options[:pty] = true
